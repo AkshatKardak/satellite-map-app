@@ -1,0 +1,17 @@
+{
+  "name": "satellite-map-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack satellite map application",
+  "scripts": {
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "start:backend": "npm --prefix backend start",
+    "test:e2e": "playwright test tests"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}
