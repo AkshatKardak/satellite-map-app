@@ -113,7 +113,7 @@ export class MapService {
 
       return response.status === 200;
     } catch (error) {
-      console.log(`Service ${service.name} health check failed:`, error.message);
+      console.log(`Service ${service.name} health check failed:`, (error as Error).message);
       return false;
     }
   }
