@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OpenLayers map fixes */
+.ol-zoom {
+  @apply top-4 left-4;
+}
+
+.ol-rotate {
+  @apply top-4 right-4;
+}
+
+.ol-attribution {
+  @apply bottom-1 left-1 text-xs;
+}
+
+.ol-control button {
+  @apply bg-white hover:bg-gray-100 text-gray-800 rounded-md;
+}
+
+.ol-control button:focus {
+  @apply outline-none ring-2 ring-blue-500;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
