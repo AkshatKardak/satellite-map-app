@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
+import 'ol/ol.css';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { useMapStore } from '../../stores/mapStore';
 import { defaults as defaultControls } from 'ol/control';
-import 'ol/ol.css';
+
 
 export const MapView = () => {
   const mapRef = useRef<HTMLDivElement>(null);

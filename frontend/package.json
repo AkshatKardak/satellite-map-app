@@ -16,7 +16,7 @@
     "react-dom": "^18.2.0",
     "ol": "^9.0.0",
     "ol-react": "^1.0.0",
-    "zustand": "^4.4.0",
+    "zustand": "^4.5.0",
     "lucide-react": "^0.288.0",
     "axios": "^1.6.2"
   },
