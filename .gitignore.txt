@@ -6,4 +6,3 @@ backend/node_modules/
 # environment files
 backend/.env
 frontend/.env
-
