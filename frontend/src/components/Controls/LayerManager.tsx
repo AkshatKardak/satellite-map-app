@@ -1,189 +1,214 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMapStore } from '../../stores/mapStore';
-import { Layers, Eye, EyeOff, Satellite, Map } from 'lucide-react';
+import { Layers, Eye, EyeOff, ChevronDown, ChevronUp, Map as MapIcon, Circle, Sparkles, LucideIcon, Satellite } from 'lucide-react';
 
-interface MapService {
-  name: string;
-  url: string;
-  layers: string;
-  format: string;
-  maxZoom: number;
-  attribution: string;
-  free: boolean;
-  available?: boolean;
+interface LayerConfig {
+  icon: LucideIcon;
+  label: string;
+  description: string;
+  gradient: string;
+  storeKey: 'wmsVisible' | 'baseMapVisible';
+  opacityKey: 'wmsOpacity';
 }
 
 export const LayerManager = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [services, setServices] = useState<MapService[]>([]);
-  const { layers, toggleLayer, setLayerOpacity, setActiveSatelliteSource } = useMapStore();
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  
+  // Get store state
+  const layers = useMapStore((state) => state.layers);
+  const toggleLayer = useMapStore((state) => state.toggleLayer);
+  const setLayerOpacity = useMapStore((state) => state.setLayerOpacity);
+  const setActiveSatelliteSource = useMapStore((state) => state.setActiveSatelliteSource);
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch('/api/map-services/wms');
-        const data = await response.json();
-        if (data.success) {
-          setServices(data.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch services:', error);
-      }
-    };
-
-    if (isOpen) {
-      fetchServices();
+  const layerConfigs: LayerConfig[] = [
+    {
+      icon: Satellite,
+      label: 'WMS Satellite',
+      description: 'High-resolution WMS tiles',
+      gradient: 'from-blue-500 to-cyan-500',
+      storeKey: 'wmsVisible',
+      opacityKey: 'wmsOpacity'
+    },
+    {
+      icon: MapIcon,
+      label: 'Base Map',
+      description: 'OpenStreetMap base layer',
+      gradient: 'from-purple-500 to-pink-500',
+      storeKey: 'baseMapVisible',
+      opacityKey: 'wmsOpacity'
     }
-  }, [isOpen]);
-
-  const freeSatelliteSources = [
-    { id: 'nrw', name: 'NRW Germany', icon: '🇩🇪' },
-    { id: 'nasa', name: 'NASA Global', icon: '🚀' },
-    { id: 'usgs', name: 'USGS Satellite', icon: '🇺🇸' },
-    { id: 'esa', name: 'ESA Sentinel', icon: '🛰️' }
-  ];
-
-  const freeBaseMaps = [
-    { id: 'osm', name: 'OpenStreetMap', icon: '🗺️' },
-    { id: 'stamen', name: 'Stamen Terrain', icon: '🏔️' },
-    { id: 'carto', name: 'CartoDB Voyager', icon: '🎨' }
   ];
 
   return (
-    <div className="absolute top-4 right-20 z-10">
-      <button
-        className="bg-white rounded-lg shadow-lg p-3 hover:shadow-xl transition-all duration-200 flex items-center gap-2"
-        onClick={() => setIsOpen(!isOpen)}
-        data-testid="layer-manager-toggle"
-      >
-        <Layers size={20} />
-        <span className="font-medium">Layers</span>
-      </button>
-      
-      {isOpen && (
-        <div className="absolute top-16 right-0 bg-white rounded-lg shadow-xl p-4 min-w-80 z-20 max-h-96 overflow-y-auto">
-          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <Layers size={18} />
-            Free Layer Management
-          </h3>
+    <div className="absolute right-5 top-5 z-[900] w-full max-w-[320px] sm:w-[340px] animate-slide-right">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+        {/* Header */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors group"
+          aria-expanded={isOpen}
+          aria-label="Toggle layer control panel"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md group-hover:scale-110 transition-transform">
+              <Layers size={20} className="text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-left">
+              <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                Layer Control
+                <Sparkles size={14} className="text-yellow-500" />
+              </h3>
+              <p className="text-xs text-gray-500 font-medium">Manage map layers</p>
+            </div>
+          </div>
           
-          {/* Base Maps */}
-          <div className="mb-4">
-            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
-              <Map size={16} />
-              Base Maps
-            </h4>
-            <div className="space-y-2">
-              {freeBaseMaps.map((map) => (
-                <label key={map.id} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-sm">
-                    <span>{map.icon}</span>
-                    {map.name}
-                  </span>
-                  <input
-                    type="radio"
-                    name="base-map"
-                    checked={layers.baseMapVisible && map.id === 'osm'} // Simplified for demo
-                    onChange={() => {}} // Would implement base map switching
-                    className="rounded"
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Satellite Sources */}
-          <div className="mb-4">
-            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
-              <Satellite size={16} />
-              Free Satellite Sources
-            </h4>
-            <div className="space-y-2">
-              {freeSatelliteSources.map((source) => (
-                <label key={source.id} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    name="satellite-source"
-                    checked={layers.activeSatelliteSource === source.id}
-                    onChange={() => setActiveSatelliteSource(source.id)}
-                    className="rounded"
-                  />
-                  <span className="flex items-center gap-2">
-                    <span>{source.icon}</span>
-                    {source.name}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Satellite Layer Controls */}
-          <div className="border-t pt-3">
-            <div className="flex items-center justify-between mb-2">
-              <label className="flex items-center gap-2 flex-1">
-                <div className={`p-1 rounded ${
-                  layers.wmsVisible ? 'bg-green-100' : 'bg-gray-100'
-                }`}>
-                  {layers.wmsVisible ? (
-                    <Eye size={16} className="text-green-600" />
-                  ) : (
-                    <EyeOff size={16} className="text-gray-400" />
-                  )}
-                </div>
-                <span className="text-sm font-medium">Satellite Imagery</span>
-              </label>
-              <button
-                onClick={() => toggleLayer('wmsVisible')}
-                className={`w-10 h-5 rounded-full transition-colors ${
-                  layers.wmsVisible ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-              >
-                <div className={`w-3 h-3 rounded-full bg-white transition-transform ${
-                  layers.wmsVisible ? 'transform translate-x-5' : 'transform translate-x-1'
-                }`} />
-              </button>
-            </div>
-            
-            {layers.wmsVisible && (
-              <div className="pl-8">
-                <label className="block text-xs text-gray-600 mb-1">
-                  Opacity: {Math.round(layers.wmsOpacity * 100)}%
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={layers.wmsOpacity}
-                  onChange={(e) => setLayerOpacity('wmsOpacity', parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                />
-              </div>
+          <div className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            {isOpen ? (
+              <ChevronUp size={20} className="text-gray-600" strokeWidth={2.5} />
+            ) : (
+              <ChevronDown size={20} className="text-gray-600" strokeWidth={2.5} />
             )}
           </div>
+        </button>
 
-          {/* Available Services Status */}
-          <div className="border-t pt-3 mt-3">
-            <h4 className="text-xs font-medium text-gray-600 mb-2">
-              Free Services Status
-            </h4>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span>LocationIQ Geocoding:</span>
-                <span className="text-green-600">✅ Available</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>OpenStreetMap:</span>
-                <span className="text-green-600">✅ Available</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>Satellite Imagery:</span>
-                <span className="text-green-600">✅ Multiple Sources</span>
+        {/* Layer Controls */}
+        {isOpen && (
+          <div className="p-4 pt-0 space-y-3 border-t border-gray-100">
+            {layerConfigs.map((config) => {
+              const Icon = config.icon;
+              const isVisible = layers[config.storeKey];
+              const opacity = layers[config.opacityKey];
+
+              return (
+                <div key={config.storeKey} className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                  {/* Layer Header */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className={`p-2 bg-gradient-to-br ${config.gradient} rounded-lg shadow-sm`}>
+                        <Icon size={18} className="text-white" strokeWidth={2.5} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-gray-800 truncate">
+                          {config.label}
+                        </div>
+                        <div className="text-xs text-gray-500 font-medium truncate">
+                          {config.description}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Visibility Toggle */}
+                    <button
+                      onClick={() => toggleLayer(config.storeKey)}
+                      className={`
+                        p-2.5 rounded-xl transition-all duration-200 shadow-sm
+                        ${isVisible
+                          ? `bg-gradient-to-br ${config.gradient} text-white shadow-md hover:scale-110`
+                          : 'bg-white text-gray-400 hover:bg-gray-100 border-2 border-gray-200 hover:scale-105'
+                        }
+                      `}
+                      aria-label={`Toggle ${config.label} ${isVisible ? 'off' : 'on'}`}
+                      aria-pressed={isVisible}
+                    >
+                      {isVisible ? (
+                        <Eye size={18} strokeWidth={2.5} />
+                      ) : (
+                        <EyeOff size={18} strokeWidth={2} />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Opacity Slider - Only for WMS layer */}
+                  {isVisible && config.storeKey === 'wmsVisible' && (
+                    <div className="space-y-2 pt-3 border-t border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <label 
+                          htmlFor={`opacity-${config.storeKey}`}
+                          className="text-xs font-bold text-gray-600 uppercase tracking-wide"
+                        >
+                          Opacity
+                        </label>
+                        <span className="text-xs font-black text-gray-800 bg-white px-2.5 py-1 rounded-lg shadow-sm border border-gray-200">
+                          {Math.round(opacity * 100)}%
+                        </span>
+                      </div>
+                      
+                      <input
+                        id={`opacity-${config.storeKey}`}
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={opacity * 100}
+                        onChange={(e) => setLayerOpacity('wmsOpacity', parseFloat(e.target.value) / 100)}
+                        className="w-full"
+                        aria-label={`${config.label} opacity control`}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(opacity * 100)}
+                        aria-valuetext={`${Math.round(opacity * 100)} percent`}
+                      />
+
+                      {/* Opacity Presets */}
+                      <div className="flex gap-1.5 pt-1" role="group" aria-label="Opacity presets">
+                        {[25, 50, 75, 100].map(preset => (
+                          <button
+                            key={preset}
+                            onClick={() => setLayerOpacity('wmsOpacity', preset / 100)}
+                            className={`
+                              flex-1 py-1 px-2 rounded-lg text-xs font-bold transition-all
+                              ${Math.round(opacity * 100) === preset
+                                ? 'bg-blue-500 text-white shadow-md'
+                                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                              }
+                            `}
+                            aria-label={`Set opacity to ${preset} percent`}
+                            aria-pressed={Math.round(opacity * 100) === preset}
+                          >
+                            {preset}%
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Satellite Source Selector */}
+            <div className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+              <label 
+                htmlFor="satellite-source-select"
+                className="flex items-center gap-2 mb-2"
+              >
+                <Satellite size={16} className="text-indigo-600" strokeWidth={2.5} />
+                <span className="text-xs font-bold text-indigo-900 uppercase tracking-wide">
+                  Satellite Source
+                </span>
+              </label>
+              <select
+                id="satellite-source-select"
+                value={layers.activeSatelliteSource}
+                onChange={(e) => setActiveSatelliteSource(e.target.value)}
+                className="w-full px-3 py-2 text-sm font-medium bg-white border-2 border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer"
+                aria-label="Select satellite imagery source"
+              >
+                <option value="nrw">NRW Satellite</option>
+                <option value="nasa">NASA GIBS</option>
+              </select>
+            </div>
+
+            {/* Info Footer */}
+            <div className="pt-3 border-t border-gray-200">
+              <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-xl" role="status" aria-live="polite">
+                <Eye size={14} className="text-blue-600 flex-shrink-0" strokeWidth={2.5} />
+                <span className="text-xs text-blue-700 font-semibold">
+                  {[layers.wmsVisible, layers.baseMapVisible].filter(Boolean).length} of 2 layers visible
+                </span>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
