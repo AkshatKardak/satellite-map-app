@@ -9,15 +9,22 @@
 
 ---
 
-## 🎬 Demo Video
+## 🎥 Demo Video
 
-**Watch the full walkthrough (3-5 minutes):**
+### **Watch Full Feature Walkthrough**
 
-### [📹 Click here to download/watch demo video](https://github.com/AkshatKardak/satellite-map-app/releases/download/v1.0.0/updated recording.mp4)
+[![Watch Demo](https://img.shields.io/badge/▶️_Watch_Demo_Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://github.com/AkshatKardak/satellite-map-app/blob/main/updated%20recording.mp4)
 
-> _Demonstrates map navigation, location search, AOI drawing, layer management, and change detection_
+**Download Demo Video:** [updated recording.mp4](https://github.com/AkshatKardak/satellite-map-app/raw/main/updated%20recording.mp4) (108 MB)
 
-**Alternative:** View on [GitHub Releases page](https://github.com/AkshatKardak/satellite-map-app/releases/tag/v1.0.0)
+**Video Contents:**
+- ✅ Map initialization with satellite imagery
+- ✅ Location search with Nominatim (Berlin, Paris, Tokyo)
+- ✅ Drawing tools: Point markers, Lines, Polygons
+- ✅ Edit and Delete features
+- ✅ Layer management with opacity controls
+- ✅ Zoom controls and fullscreen mode
+- ✅ Mobile responsive design showcase
 
 ---
 
@@ -758,7 +765,7 @@ Computer Engineering Student | Full-Stack Developer
 
 | Resource | Link |
 |----------|------|
-| 📹 **Demo Video** | [Download/Watch Video](https://github.com/AkshatKardak/satellite-map-app/releases/download/v1.0.0/updated recording.mp4) |
+| 📹 **Demo Video** |[![Watch Demo](https://img.shields.io/badge/▶️_Watch_Demo_Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://github.com/AkshatKardak/satellite-map-app/blob/main/updated%20recording.mp4)
 | 🚀 **GitHub Release** | [View v1.0.0](https://github.com/AkshatKardak/satellite-map-app/releases/tag/v1.0.0) |
 | 🔍 **Figma Design** | [View Prototype](https://www.figma.com/proto/mtvRfVu94PTKLaOkbPmqOX/) |
 | 🐛 **Report Bug** | [Open Issue](https://github.com/AkshatKardak/satellite-map-app/issues) |
@@ -768,11 +775,3 @@ Computer Engineering Student | Full-Stack Developer
 ---
 
 **Made for the Flowbit Private Limited Internship Challenge** 🚀
-
-
-
-
-
-
-
-
